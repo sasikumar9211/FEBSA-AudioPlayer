@@ -4,6 +4,7 @@ import { CloudService } from '../../services/cloud.service';
 import { StreamState } from '../../interfaces/stream-state';
 import { AuthService } from '../../services/auth.service';
 import { AfterViewInit, ElementRef, ViewChild } from "@angular/core";
+import {PhotoService} from '../../services/photo.service';
 
 @Component({
   selector: 'app-player',
@@ -14,12 +15,13 @@ export class PlayerComponent implements AfterViewInit {
   files: Array<any> = [];
   state: StreamState;
   currentFile: any = {};
+  emotions : string;
 
-  constructor(private audioService: AudioService, cloudService: CloudService, public auth: AuthService) {
+  constructor(private audioService: AudioService, public cloudService: CloudService, public auth: AuthService,public photoService:PhotoService) {
     // get media files
-    cloudService.getFiles().subscribe(files => {
-      this.files = files;
-    });
+   // cloudService.getFiles().subscribe(files => {
+     // this.files = files;
+    //});
 
     // listen to stream state
     this.audioService.getState()
@@ -117,14 +119,80 @@ export class PlayerComponent implements AfterViewInit {
 
   capture() {
     this.drawImageToCanvas(this.video.nativeElement);
-    this.captures.push(this.canvas.nativeElement.toDataURL("image/png"));
-    this.isCaptured = true;
+    this.captures.push(this.canvas.nativeElement.toDataURL("image/jpeg",1.0));
     this.isShown = ! this.isShown;
-  }
+    console.log(typeof(this.captures[0]));
+    console.log(this.captures[0]);
+    this.photoService.captureExpression(this.captures[0]).subscribe(data => {
+      console.log('Response From Flask Service...',data.emotion)
+      this.emotions = data.emotion;
+      console.log("Emotions -",this.emotions);
+
+      if(this.emotions  === "Angry"){
+        console.log("Emotions -",this.emotions);
+        this.isCaptured = true;
+        this.cloudService.getAngrySongs().subscribe(files => {
+        this.files = files;
+        });
+      }
+
+      if(this.emotions  === "Angry"){
+        console.log("Emotions -",this.emotions);
+        this.isCaptured = true;
+        this.cloudService.getAngrySongs().subscribe(files => {
+        this.files = files;
+        });
+      }
+
+      if(this.emotions  === "Happy"){
+        console.log("Emotions -",this.emotions);
+        this.isCaptured = true;
+        this.cloudService.getHappySongs().subscribe(files => {
+        this.files = files;
+        });
+      }
+
+      if(this.emotions  === "Fear"){
+        console.log("Emotions -",this.emotions);
+        this.isCaptured = true;
+        this.cloudService.getFearSongs().subscribe(files => {
+        this.files = files;
+        });
+      }
+
+
+      if(this.emotions  === "Surprise"){
+          console.log("Emotions -",this.emotions);
+          this.isCaptured = true;
+          this.cloudService.getSurpriseSongs().subscribe(files => {
+          this.files = files;
+          });
+        }
+
+      if(this.emotions  === "Neutral" ){
+      console.log("Emotions -",this.emotions);
+      this.isCaptured = true;
+      this.cloudService.getNeutralSongs().subscribe(files => {
+      this.files = files;
+      });
+    }
+
+      if(this.emotions  === "Sad"){
+          console.log("Emotions -",this.emotions);
+          this.isCaptured = true;
+          this.cloudService.getSadSongs().subscribe(files => {
+          this.files = files;
+          });}
+
+
+    });
+
+}
 
   drawImageToCanvas(image: any) {
     this.canvas.nativeElement
       .getContext("2d")
       .drawImage(image, 0, 0, this.WIDTH, this.HEIGHT);
   }
+
 }

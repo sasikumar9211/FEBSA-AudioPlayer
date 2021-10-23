@@ -22,11 +22,14 @@
           [width]="WIDTH"
           [height]="HEIGHT"
           autoplay
-          (keyup.enter)="capture()"
-         ></video>
-         <h3 >Press enter to capture the current Facial Expression</h3>
+         >
+        </video>
         </div>
-        <div class="vedio_content"  *ngIf="isShown">
+        <div class="vedio_content">
+        <button class="btn btn-danger" (click)="capture()" *ngIf="isShown">
+          Capture the facial expression
+        </button></div>
+       <div class="vedio_content"  *ngIf="isShown">
         <canvas
           [class.show]="isCaptured"
           [class.hide]="!isCaptured"
@@ -38,9 +41,9 @@
       </div>
 
 
-      <div *ngIf="isCaptured">
-        <h3>Facial Expression is disgust and playing the below list of Motivate songs</h3>
-      <mat-list-item *ngFor="let file of files; let i = index" (click)="openFile(file, i)">
+      <div *ngIf="isCaptured" >
+        <h3>Facial Expression is {{emotions}} below are the Recommended Songs</h3>
+      <mat-list-item *ngFor="let file of files; let i = index" (click)="openFile(file, i)" >
         <mat-icon color="primary" mat-list-icon>music_note</mat-icon>
         <h4 mat-line>{{ file.name }}</h4>
         <h5 mat-line>by {{ file.artist }}</h5>

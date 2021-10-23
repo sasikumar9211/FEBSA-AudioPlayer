@@ -1,0 +1,10 @@
+<div>
+  <webcam [height]="500" [width]="500" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" *ngIf="showWebcam"
+          [imageQuality]="1"
+          (initError)="handleInitError($event)"
+  ></webcam>
+  <br/>
+  <button class="btn btn-info" (click)="triggerSnapshot();">
+    Capture the facial expression
+  </button>
+  </div>
